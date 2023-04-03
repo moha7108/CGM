@@ -42,7 +42,7 @@ def imshow_with_encoded_labels(batch_size, images, labels, classes):
 	
 	for i in np.arange(batch_size):
     
-		fig = plt.figure()
+		fig = plt.figure(num='w/attrs')
 
 		ax = fig.add_subplot(xticks=[], yticks=[])
 		plt.imshow(images[i].permute(1, 2, 0) if torch.is_tensor(images) else np.transpose(images[i], (1, 2, 0)) if isinstance(images, np.ndarray) else None)
@@ -52,15 +52,17 @@ def imshow_with_encoded_labels(batch_size, images, labels, classes):
 		ax.set_title(attr)
 
 def imshow_batch(batch_size, images):
-	fig = plt.figure( figsize=(25,25))
-	# set number of columns (use 3 to demonstrate the change)
+	
 	ncols = 10
-	# calculate number of rows
 	nrows = batch_size // ncols + (batch_size % ncols > 0)
+	
+	fig = plt.figure( num='batched', figsize=(25,5*nrows), layout='tight')
 
-	# loop through the length of tickers and keep track of index
 	for i in np.arange(batch_size):
 
 		ax = plt.subplot(nrows, ncols, i + 1, xticks=[], yticks=[])
 		# ax.set_title(z[i])
 		plt.imshow(images[i].permute(1, 2, 0) if torch.is_tensor(images) else np.transpose(images[i], (1, 2, 0)) if isinstance(images, np.ndarray) else None)
+
+def imshow_compared_reconstuction():
+	pass
