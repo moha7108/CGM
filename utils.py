@@ -1,7 +1,8 @@
-import time
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
+import time, datetime
+str_format = '%Y%m%d%H%M%S'
 
 ##numpy utils
 
@@ -21,6 +22,20 @@ def split_validation(data):
     
     return valid_data, test_data
 
+
+def split_data(data):
+	train_len = int(len(data)*(0.8))
+	valid_len = (len(data) - train_len) // 2 
+	test_len = (len(data) - train_len) - valid_len
+	
+	train_data, valid_data, test_data =  torch.utils.data.random_split(data, [train_len, valid_len , test_len])
+	
+	
+	return train_data, valid_data, test_data 
+
+
+
+
 ## Encoded labels helper functions
 def get_encoded_attrs(classes, label):
 	
@@ -31,7 +46,7 @@ def get_encoded_attrs(classes, label):
 
 def encode_attrs(attrs, classes):
 	
-	endoded_label = [1 if label in attrs else 0 for label in classes]
+	encoded_label = [1 if label in attrs else 0 for label in classes]
 	
 	return encoded_label
 	
@@ -48,21 +63,27 @@ def imshow_with_encoded_labels(batch_size, images, labels, classes):
 		plt.imshow(images[i].permute(1, 2, 0) if torch.is_tensor(images) else np.transpose(images[i], (1, 2, 0)) if isinstance(images, np.ndarray) else None)
 		
 		attr=get_encoded_attrs(classes, labels[i])
+		print(attr)
 
 		ax.set_title(attr)
 
 def imshow_batch(batch_size, images):
+	ts = datetime.datetime.now().strftime(str_format)
+
 	
 	ncols = 10
 	nrows = batch_size // ncols + (batch_size % ncols > 0)
 	
-	fig = plt.figure( num='batched', figsize=(25,5*nrows), layout='tight')
+	fig = plt.figure( num=f'batched_{ts}', figsize=(25,5*nrows), layout='tight')
 
 	for i in np.arange(batch_size):
 
 		ax = plt.subplot(nrows, ncols, i + 1, xticks=[], yticks=[])
 		# ax.set_title(z[i])
 		plt.imshow(images[i].permute(1, 2, 0) if torch.is_tensor(images) else np.transpose(images[i], (1, 2, 0)) if isinstance(images, np.ndarray) else None)
+	   
+	plt.show()
+
 
 def imshow_compared_reconstuction():
 	pass
